@@ -42,6 +42,19 @@
 {
     [super viewDidLoad];
     
+    [self drawButton];
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.toolbarHidden = NO;
+    self.navigationController.navigationBarHidden = NO;
+}
+
+-(void)drawButton
+{
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     [[AppearanceManager shared] customizeRootViewController:self.view];
     
@@ -99,14 +112,6 @@
                                                     selector:@selector(updateDisplay)
                                                     userInfo:nil
                                                      repeats:YES];
-    
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    self.navigationController.toolbarHidden = NO;
-    self.navigationController.navigationBarHidden = NO;
 }
 
 - (NSString *)documentsDicrectory
@@ -122,8 +127,7 @@
 
 -(void)btnBackClicked:(id)sender
 {
-    PickerViewController *pickerViewController  = [[PickerViewController alloc]initWithImage:[_pinDescriptionEntity thumbnail] initWithPointDescription:_pinDescriptionEntity];
-    [self.navigationController pushViewController:pickerViewController animated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -141,9 +145,6 @@
         }
 }
 
-
-
-
 - (void)stopButtonTapped:(id)sender
 {
     [_recorder stop];
@@ -151,17 +152,6 @@
     [audioSession setActive:NO error:nil];
     _pinDescriptionEntity.soundPath = _recorderFilePath;
 }
-
-
-//- (void) audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
-//{
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Done"
-//                                                    message: @"Finish playing the recording!"
-//                                                   delegate: nil
-//                                          cancelButtonTitle:@"OK"
-//                                          otherButtonTitles:nil];
-//    [alert show];
-//}
 
 - (void) audioRecorderDidFinishRecording:(AVAudioRecorder *)avrecorder successfully:(BOOL)flag
 {
@@ -202,7 +192,5 @@
     dBLevel = 1 - fabsf(dBLevel) / 100;
     [_progress setProgress:dBLevel animated:YES];
 }
-
-
 
 @end

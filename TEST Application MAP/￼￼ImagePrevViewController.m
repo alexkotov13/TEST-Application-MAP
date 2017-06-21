@@ -39,22 +39,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setFetchedController];      
+    [self setFetchedController];
+    [self draw];
+}
+
+-(void)draw
+{
     _playButtonImage = [UIImage imageNamed:@"next.png"];
-    _stopButtonImage = [UIImage imageNamed:@"stop.png"];    
+    _stopButtonImage = [UIImage imageNamed:@"stop.png"];
     
     _info = [_fetchedResultsController objectAtIndexPath:_indexPath];
     self.navigationItem.title = _info.titleForPin;
     UIImageView * backdroundView = [[UIImageView alloc] initWithImage:[_info thumbnail]];
     backdroundView.contentMode = UIViewContentModeScaleAspectFill;
     backdroundView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-    [self.view addSubview:backdroundView];    
+    [self.view addSubview:backdroundView];
     
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     [[AppearanceManager shared] customizeToolbar:self.navigationController.toolbar];
-   //self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"-NQXlkeTSf0.jpg"]];
-  //[[AppearanceManager shared] customizeRootViewController:self.view];
-    //bottom navigationItemelf.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"sfond-appz.png"]];
+    
     UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back"
                                                                    style:UIBarButtonItemStyleBordered
                                                                   target:self action:@selector(btnBackClicked:) ];
@@ -63,12 +66,12 @@
     
     _button =  [UIButton buttonWithType:UIButtonTypeCustom];
     [_button setImage:_playButtonImage forState:UIControlStateNormal];
-    [_button addTarget:self action:@selector(playButtonTapped:) forControlEvents:UIControlEventTouchUpInside];    
+    [_button addTarget:self action:@selector(playButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [_button setFrame:CGRectMake(0, 0, 40, 40)];
-    _playButton = [[UIBarButtonItem alloc] initWithCustomView:_button ];     
-        
+    _playButton = [[UIBarButtonItem alloc] initWithCustomView:_button ];
+    
     CGRect frame = CGRectMake(10, self.view.bounds.size.height / 1.7, self.view.bounds.size.width - 120,0);
-    _aSlider = [[UISlider alloc] initWithFrame:frame];   
+    _aSlider = [[UISlider alloc] initWithFrame:frame];
     [_aSlider setBackgroundColor:[UIColor clearColor]];
     _aSlider.minimumValue = 0.0;
     _aSlider.maximumValue = 50.0;
@@ -83,22 +86,21 @@
     UIBarButtonItem* progressItem = [[UIBarButtonItem alloc] initWithCustomView:_aSlider];
     UIBarButtonItem* time = [[UIBarButtonItem alloc] initWithCustomView:_timeLabel];
     
-    //UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     NSMutableArray * arr = [NSMutableArray arrayWithObjects:_playButton,progressItem, time, nil];
-    [self setToolbarItems:arr animated:YES]; 
-
-//    NSString *soundFilePath = [[NSBundle mainBundle] pathForResource:_info.soundPath                                                              ofType:@"caf"];
+    [self setToolbarItems:arr animated:YES];
+    
     NSURL *soundFileURL = [NSURL fileURLWithPath:_info.soundPath];
     _player = [[AVAudioPlayer alloc] initWithContentsOfURL:soundFileURL
-                                                          error:nil];
+                                                     error:nil];
     _player.numberOfLoops = 0;
-    [_player setDelegate:self];   
-    _player.meteringEnabled = YES;    
+    [_player setDelegate:self];
+    _player.meteringEnabled = YES;
     _playerTimer = [NSTimer scheduledTimerWithTimeInterval:0.05
-                                                     target:self
-                                                   selector:@selector(updateDisplay)
-                                                   userInfo:nil
-                                                    repeats:YES];
+                                                    target:self
+                                                  selector:@selector(updateDisplay)
+                                                  userInfo:nil
+                                                   repeats:YES];
+    
 }
 
 -(void)setFetchedController
@@ -120,8 +122,8 @@
     NSString* timeInfoString = [[NSString alloc]
                                 initWithFormat:@"%02.0f:%02.0f",
                                 minutes, seconds];
-    _timeLabel.text = timeInfoString;   
-
+    _timeLabel.text = timeInfoString;
+    
     // Update the slider about the music time
     _aSlider.value = _player.currentTime;
 }
@@ -152,7 +154,7 @@
     if(!_player.isPlaying)
     {
         [_player prepareToPlay];
-        [_player play];      
+        [_player play];
         [_button setImage:_stopButtonImage forState:UIControlStateNormal];
         [_aSlider addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
         // Set the maximum value of the UISlider
@@ -162,11 +164,11 @@
     }
     else
     {
-        [_button setImage:_playButtonImage forState:UIControlStateNormal];        
+        [_button setImage:_playButtonImage forState:UIControlStateNormal];
         [_player stop];
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-        [audioSession setActive:NO error:nil];       
-    }    
+        [audioSession setActive:NO error:nil];
+    }
 }
 
 - (void) audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag{
@@ -194,7 +196,7 @@
 -(void)btnBackClicked:(id)sender
 {
     [_player stop];
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

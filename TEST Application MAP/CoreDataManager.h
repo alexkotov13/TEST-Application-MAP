@@ -12,7 +12,6 @@
 @property  NSManagedObjectContext *managedObjectContext;
 @property  NSManagedObjectContext *subContext;
 
-
 + (CoreDataManager *)sharedInstance;
 - (void)saveContext;
 - (NSFetchedResultsController *)fetchedResultsController;

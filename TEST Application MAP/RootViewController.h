@@ -13,5 +13,5 @@
 
 @interface RootViewController : UIViewController
 
-@property(nonatomic, readwrite) UIColor *color;
+@property UIColor *color;
 @end

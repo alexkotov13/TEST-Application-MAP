@@ -11,7 +11,6 @@
 #import "CoreDataManager.h"
 #import "PointDescription.h"
 
-
 @interface MapViewController : UIViewController 
 
 @end

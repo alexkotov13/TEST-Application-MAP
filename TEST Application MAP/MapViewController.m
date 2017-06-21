@@ -18,8 +18,6 @@
 #define POPUP_MAP 1
 #define POPUP_IMAGE_SOURCE 2
 
-
-
 @interface MapViewController() <UIActionSheetDelegate, MKMapViewDelegate
 ,UINavigationControllerDelegate,NSFetchedResultsControllerDelegate>
 {
@@ -27,8 +25,8 @@
     MKMapView* _mapView;
     UIImage* _image;
 }
-@property (nonatomic, retain) NSString* recorderFilePath;
-@property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
+@property NSString* recorderFilePath;
+@property NSFetchedResultsController *fetchedResultsController;
 @end
 
 @implementation MapViewController
@@ -42,6 +40,16 @@
     
     _recorderFilePath = nil;
     [self setFetchedController];
+    [self drawButton];
+    [self addMap];
+    _pinDescriptionEntity = [NSEntityDescription
+                             insertNewObjectForEntityForName:@"PointDescription"
+                             inManagedObjectContext:[[CoreDataManager sharedInstance] subContext]];
+    
+}
+
+-(void)drawButton
+{
     self.navigationItem.title = @"MAP";
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     
@@ -72,11 +80,6 @@
     NSMutableArray * arr = [NSMutableArray arrayWithObjects:flexibleSpace,mapTypeButton,flexibleSpace, nil];
     [self setToolbarItems:arr animated:YES];
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:mapTypeButton];
-    [self addMap];
-    _pinDescriptionEntity = [NSEntityDescription
-                             insertNewObjectForEntityForName:@"PointDescription"
-                             inManagedObjectContext:[[CoreDataManager sharedInstance] subContext]];
-    
 }
 
 -(void)addMap

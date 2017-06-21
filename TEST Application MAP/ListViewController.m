@@ -22,13 +22,28 @@
 {
     [super viewDidLoad];
     
+    [self setFetchedController];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    
-    
+    [self drawButton];
+}
+
+-(void)setFetchedController
+{
+    _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    [NSFetchedResultsController deleteCacheWithName:@"Root"];
+    NSError *error;
+    if (![[self fetchedResultsController] performFetch:&error])
+    {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        exit(-1);  // Fail
+    }
+}
+
+-(void)drawButton
+{
     self.navigationItem.title = @"List";
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
-    //[[AppearanceManager shared] customizeRootViewController:self.view];
     
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];
@@ -39,17 +54,6 @@
                                                                   target:self action:@selector(btnBackClicked:) ];
     self.navigationItem.leftBarButtonItem = backButton;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.leftBarButtonItem];
-    
-    _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
-    _fetchedResultsController.delegate = self;
-    [NSFetchedResultsController deleteCacheWithName:@"Root"];
-    NSError *error;
-	if (![[self fetchedResultsController] performFetch:&error])
-    {
-		NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-		exit(-1);  // Fail
-	}  
-
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -64,8 +68,6 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
-
-
 #pragma mark - UITableViewDelegate & UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -76,15 +78,15 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id  sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];    
+    return [sectionInfo numberOfObjects];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{    
+{
     _info = [_fetchedResultsController objectAtIndexPath:indexPath];
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
-        NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];       
+        NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
         [context deleteObject:_info];
         [context save:nil];
         [tableView reloadData];
@@ -112,7 +114,6 @@
     _pickedImage = [_info thumbnail];
     cell.imageView.image = _pickedImage;
     cell.textLabel.text = _info.titleForPin;
-
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -152,7 +153,6 @@
             [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]withRowAnimation:UITableViewRowAnimationFade];
             break;
     }
-    
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id )sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
@@ -174,4 +174,3 @@
 }
 
 @end
-

@@ -3,12 +3,13 @@
 #import "CoreDataManager.h"
 @interface CoreDataManager()
 
-@property (nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property NSManagedObjectModel *managedObjectModel;
+@property NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @end
 
 @implementation CoreDataManager
+
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -23,7 +24,6 @@ static CoreDataManager *sharedManager = nil;
     {
         if (!sharedManager)
         {
-            //sharedManager= [NSAllocateObject([self class], 0, NULL) init];
             sharedManager = [[CoreDataManager alloc] init];
         }
     }

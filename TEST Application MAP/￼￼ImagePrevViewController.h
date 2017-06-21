@@ -14,6 +14,6 @@
 
 
 @interface ImagePrevViewController : UIViewController <AVAudioPlayerDelegate>
-//- (id)initWithImage:(UIImage *)image initWithPointDescription:(PointDescription*)pointDescription;
+
 - (id)initWithIndexOfObject:(NSIndexPath *)indexPath;
 @end

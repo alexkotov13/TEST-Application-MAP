@@ -10,10 +10,10 @@
 
 @interface PickerViewController ()
 {
-    CGSize view;
+    CGSize _view;
     UIImage *_pickedImage;
-    UIAlertView *alert;
-   PointDescription *_pointDescription;
+    UIAlertView *_alert;
+    PointDescription *_pointDescription;
     UITextField* _text;
 }
 
@@ -30,21 +30,32 @@
         _pointDescription = pointDescription;
         _pickedImage = image;
     }
-    return self;    
+    return self;
 }
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
+    [super viewDidLoad];   
     
-    self.navigationItem.title = @"";
     [self setFetchedController];
+    [self drawButtonTextFieldAndCostumase]; 
+}
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.toolbarHidden = YES;
+    self.navigationController.navigationBarHidden = NO;
+}
+
+-(void)drawButtonTextFieldAndCostumase
+{
     UIImageView * backdroundView = [[UIImageView alloc] initWithImage:_pickedImage];
     backdroundView.contentMode = UIViewContentModeScaleAspectFill;
     backdroundView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-    [self.view addSubview:backdroundView];    
+    [self.view addSubview:backdroundView];
     
+    self.navigationItem.title = @"";
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     
     //bottom navigationItem
@@ -62,8 +73,8 @@
     self.navigationItem.rightBarButtonItem = btnNext;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];
     
-    view = self.view.bounds.size;
-    _text = [[UITextField alloc] initWithFrame:CGRectMake(view.width/4-20, view.height/3, 200.0, 40.0)];
+    _view = self.view.bounds.size;
+    _text = [[UITextField alloc] initWithFrame:CGRectMake(_view.width/4-20, _view.height/3, 200.0, 40.0)];
     _text.borderStyle = UITextBorderStyleRoundedRect;
     _text.font = [UIFont systemFontOfSize:15];
     _text.placeholder = @"Enter text";
@@ -75,15 +86,6 @@
     _text.delegate = self;
     _text.returnKeyType = UIReturnKeyGo;
     [self.view addSubview:_text];
-    
-    
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    self.navigationController.toolbarHidden = YES;
-    self.navigationController.navigationBarHidden = NO;
 }
 
 -(void)setFetchedController
@@ -101,7 +103,6 @@
 -(void)btnNextClicked:(id)sender
 {
     _pointDescription.titleForPin = _text.text;
-    [[CoreDataManager sharedInstance] saveContext];
     SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]initWithPointDescription:_pointDescription];
     [self.navigationController pushViewController:soundRecorderViewController animated:YES];
 }
@@ -112,23 +113,21 @@
     [self.navigationController pushViewController:mapViewController animated:YES];
 }
 
-
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if(alertView == alert)
+    if(alertView == _alert)
         if (buttonIndex == 0)
         {
             _pointDescription.titleForPin = _text.text;
-            [[CoreDataManager sharedInstance] saveContext];
             SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]initWithPointDescription:_pointDescription];
             [self.navigationController pushViewController:soundRecorderViewController animated:YES];
         }
 }
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField
-{    
-    alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-    [alert show];   
+{
+    _alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [_alert show];
     return YES;
 }
 

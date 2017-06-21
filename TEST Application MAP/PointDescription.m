@@ -8,7 +8,7 @@
 
 #import "PointDescription.h"
 
-@interface PointDescription()// <MKAnnotation>
+@interface PointDescription()
 @property (nonatomic, assign) CLLocationCoordinate2D theCoordinate;
 @end
 

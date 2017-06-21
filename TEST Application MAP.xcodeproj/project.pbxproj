@@ -13,7 +13,6 @@
 		847EA7A91C7C4D5400E6ADF0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847EA7A81C7C4D5400E6ADF0 /* AVFoundation.framework */; };
 		847EC17F1C7E068E00005BBD /* -NQXlkeTSf0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 847EC17E1C7E068E00005BBD /* -NQXlkeTSf0.jpg */; };
 		847EC1821C7E079100005BBD /* ￼￼ImagePrevViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 847EC1811C7E079100005BBD /* ￼￼ImagePrevViewController.m */; };
-		847EC1841C7E0CE200005BBD /* 2016-02-24 16:06:58 +0000.caf in Resources */ = {isa = PBXBuildFile; fileRef = 847EC1831C7E0CE200005BBD /* 2016-02-24 16:06:58 +0000.caf */; };
 		847F72A11C7B0C1A00186FF0 /* PickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 847F72A01C7B0C1900186FF0 /* PickerViewController.m */; };
 		847F72A41C7B185F00186FF0 /* SoundRecorderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 847F72A31C7B185F00186FF0 /* SoundRecorderViewController.m */; };
 		84A7C2201C7F0D9200CC6073 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 84A7C21E1C7F0D9100CC6073 /* stop.png */; };
@@ -34,13 +33,10 @@
 		84D15BB91C80510A00161474 /* Jury.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 84D15BB51C80510A00161474 /* Jury.jpg */; };
 		84D15BBA1C80510A00161474 /* Yuliya.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 84D15BB61C80510A00161474 /* Yuliya.jpg */; };
 		84D15BBC1C807FD200161474 /* Alex.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 84D15BBB1C807FD200161474 /* Alex.jpg */; };
-		84D15BBF1C80862B00161474 /* ArrayData.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D15BBE1C80862B00161474 /* ArrayData.m */; };
 		84D4B20A1C7F4AD8003E5C3C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B31BF11C74A5EF00816034 /* UIKit.framework */; };
 		84D4B20B1C7F4AD8003E5C3C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B31BF31C74A5EF00816034 /* Foundation.framework */; };
 		84D4B20C1C7F4AD8003E5C3C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B31BF51C74A5EF00816034 /* CoreGraphics.framework */; };
 		84D4B20D1C7F4AD8003E5C3C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D5A4081C7F383600CA00F0 /* CoreData.framework */; };
-		84E3815A1C7DA4D500F2547A /* MyAudioMemo.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 84E381591C7DA4D500F2547A /* MyAudioMemo.m4a */; };
-		84EB41671C774AEB0091271D /* MapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 84EB41661C774AEB0091271D /* MapAnnotation.m */; };
 		84EB416A1C775B700091271D /* CameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84EB41691C775B700091271D /* CameraViewController.m */; };
 		84EB416D1C7777FC0091271D /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84EB416C1C7777FC0091271D /* ListViewController.m */; };
 		958396ED1EF8122F00057D26 /* CoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 958396EA1EF8122E00057D26 /* CoreDataManager.m */; };
@@ -60,7 +56,6 @@
 		847EC17E1C7E068E00005BBD /* -NQXlkeTSf0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "-NQXlkeTSf0.jpg"; sourceTree = "<group>"; };
 		847EC1801C7E079100005BBD /* ￼￼ImagePrevViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "￼￼ImagePrevViewController.h"; sourceTree = "<group>"; };
 		847EC1811C7E079100005BBD /* ￼￼ImagePrevViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "￼￼ImagePrevViewController.m"; sourceTree = "<group>"; };
-		847EC1831C7E0CE200005BBD /* 2016-02-24 16:06:58 +0000.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "2016-02-24 16:06:58 +0000.caf"; sourceTree = SOURCE_ROOT; };
 		847F729F1C7B0C1900186FF0 /* PickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PickerViewController.h; sourceTree = "<group>"; };
 		847F72A01C7B0C1900186FF0 /* PickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickerViewController.m; sourceTree = "<group>"; };
 		847F72A21C7B185F00186FF0 /* SoundRecorderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundRecorderViewController.h; sourceTree = "<group>"; };
@@ -88,13 +83,8 @@
 		84D15BB51C80510A00161474 /* Jury.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Jury.jpg; sourceTree = SOURCE_ROOT; };
 		84D15BB61C80510A00161474 /* Yuliya.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Yuliya.jpg; sourceTree = SOURCE_ROOT; };
 		84D15BBB1C807FD200161474 /* Alex.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Alex.jpg; sourceTree = SOURCE_ROOT; };
-		84D15BBD1C80862A00161474 /* ArrayData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayData.h; sourceTree = "<group>"; };
-		84D15BBE1C80862B00161474 /* ArrayData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArrayData.m; sourceTree = "<group>"; };
 		84D4B2091C7F4AD7003E5C3C /* data.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = data.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84D5A4081C7F383600CA00F0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		84E381591C7DA4D500F2547A /* MyAudioMemo.m4a */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MyAudioMemo.m4a; sourceTree = "<group>"; };
-		84EB41651C774AEB0091271D /* MapAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapAnnotation.h; sourceTree = "<group>"; };
-		84EB41661C774AEB0091271D /* MapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapAnnotation.m; sourceTree = "<group>"; };
 		84EB41681C775B6F0091271D /* CameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraViewController.h; path = ../CameraViewController.h; sourceTree = "<group>"; };
 		84EB41691C775B700091271D /* CameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CameraViewController.m; path = ../CameraViewController.m; sourceTree = "<group>"; };
 		84EB416B1C7777FC0091271D /* ListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListViewController.h; sourceTree = "<group>"; };
@@ -190,14 +180,8 @@
 				842F979E1C75FE50009E00A4 /* AppearanceManager.m */,
 				847F729F1C7B0C1900186FF0 /* PickerViewController.h */,
 				847F72A01C7B0C1900186FF0 /* PickerViewController.m */,
-				84E381591C7DA4D500F2547A /* MyAudioMemo.m4a */,
-				847EC1831C7E0CE200005BBD /* 2016-02-24 16:06:58 +0000.caf */,
-				84EB41651C774AEB0091271D /* MapAnnotation.h */,
-				84EB41661C774AEB0091271D /* MapAnnotation.m */,
 				847EC1801C7E079100005BBD /* ￼￼ImagePrevViewController.h */,
 				847EC1811C7E079100005BBD /* ￼￼ImagePrevViewController.m */,
-				84D15BBD1C80862A00161474 /* ArrayData.h */,
-				84D15BBE1C80862B00161474 /* ArrayData.m */,
 				84EB416B1C7777FC0091271D /* ListViewController.h */,
 				84EB416C1C7777FC0091271D /* ListViewController.m */,
 				847F72A21C7B185F00186FF0 /* SoundRecorderViewController.h */,
@@ -314,9 +298,7 @@
 				84B31C041C74A5EF00816034 /* Default.png in Resources */,
 				84B31C061C74A5EF00816034 /* Default@2x.png in Resources */,
 				84B31C081C74A5EF00816034 /* Default-568h@2x.png in Resources */,
-				84E3815A1C7DA4D500F2547A /* MyAudioMemo.m4a in Resources */,
 				847EC17F1C7E068E00005BBD /* -NQXlkeTSf0.jpg in Resources */,
-				847EC1841C7E0CE200005BBD /* 2016-02-24 16:06:58 +0000.caf in Resources */,
 				84A7C2201C7F0D9200CC6073 /* stop.png in Resources */,
 				84A7C2211C7F0D9200CC6073 /* next.png in Resources */,
 				84D15BB71C80510A00161474 /* Anastasia.jpg in Resources */,
@@ -345,13 +327,11 @@
 				84B31C0B1C74A5EF00816034 /* RootViewController.m in Sources */,
 				84B31C171C74A86E00816034 /* MapViewController.m in Sources */,
 				842F979F1C75FE50009E00A4 /* AppearanceManager.m in Sources */,
-				84EB41671C774AEB0091271D /* MapAnnotation.m in Sources */,
 				84EB416A1C775B700091271D /* CameraViewController.m in Sources */,
 				84EB416D1C7777FC0091271D /* ListViewController.m in Sources */,
 				847F72A11C7B0C1A00186FF0 /* PickerViewController.m in Sources */,
 				847F72A41C7B185F00186FF0 /* SoundRecorderViewController.m in Sources */,
 				847EC1821C7E079100005BBD /* ￼￼ImagePrevViewController.m in Sources */,
-				84D15BBF1C80862B00161474 /* ArrayData.m in Sources */,
 				958396ED1EF8122F00057D26 /* CoreDataManager.m in Sources */,
 				95A325961EF90CBD00923F9B /* Model.xcdatamodeld in Sources */,
 				95A325991EF90DFC00923F9B /* AppDelegate.m in Sources */,

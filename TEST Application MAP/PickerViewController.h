@@ -13,5 +13,6 @@
 #import "CameraViewController.h"
 
 @interface PickerViewController : UIViewController <UITextFieldDelegate,NSFetchedResultsControllerDelegate>
+
 -(id)initWithImage:(UIImage *)image initWithPointDescription:(PointDescription*) pointDescription;
 @end
