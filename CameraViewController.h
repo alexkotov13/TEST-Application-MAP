@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "AppearanceManager.h"
 #import "PickerViewController.h"
-#import "ArrayData.h"
+#import "ListViewController.h"
 
 @interface CameraViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 
-
+-(id)initWithPointDescription:(PointDescription*) pointDescription;
 
 @end

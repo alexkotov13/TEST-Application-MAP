@@ -10,8 +10,9 @@
 #import <UIKit/UIKit.h>
 #import "MapViewController.h"
 #import "SoundRecorderViewController.h"
-#import "ArrayData.h"
+#import "CameraViewController.h"
 
-@interface PickerViewController : UIViewController <UITextFieldDelegate>
-- (id)initWithImage:(UIImage *)image;
+@interface PickerViewController : UIViewController <UITextFieldDelegate,NSFetchedResultsControllerDelegate>
+
+-(id)initWithImage:(UIImage *)image initWithPointDescription:(PointDescription*) pointDescription;
 @end

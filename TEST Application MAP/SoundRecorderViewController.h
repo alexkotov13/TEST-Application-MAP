@@ -11,8 +11,7 @@
 #import "PickerViewController.h"
 #import <AVFoundation/AVFoundation.h>
 
-
-
 @interface SoundRecorderViewController : UIViewController <AVAudioRecorderDelegate>
 
+-(id)initWithPointDescription:(PointDescription*) pointDescription;
 @end

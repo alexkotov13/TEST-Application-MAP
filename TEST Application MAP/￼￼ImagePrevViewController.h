@@ -10,8 +10,10 @@
 #import "AppearanceManager.h"
 #import "ListViewController.h"
 #import <AVFoundation/AVFoundation.h>
-#import "ArrayData.h"
+#import "PointDescription.h"
+
 
 @interface ImagePrevViewController : UIViewController <AVAudioPlayerDelegate>
-- (id)initWithImage:(UIImage *)image;
+
+- (id)initWithIndexOfObject:(NSIndexPath *)indexPath;
 @end

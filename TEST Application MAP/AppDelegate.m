@@ -1,39 +1,26 @@
 //
 //  AppDelegate.m
-//  TEST Application MAP
+//  testApp
 //
-//  Created by admin on 17.02.16.
-//  Copyright (c) 2016 admin. All rights reserved.
+//  Created by Anna on 04.04.14.
+//  Copyright (c) 2014 Anna. All rights reserved.
 //
 
 #import "AppDelegate.h"
-
 #import "RootViewController.h"
-
-#import "MapViewController.h"
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // создаём окно для приложения по размеру экрана
-    //self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-   // self.viewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
-   // self.window.rootViewController = self.viewController;
-    //[self.window makeKeyAndVisible];
-        
-        
     RootViewController* mainViewController = [[RootViewController alloc] init];
     UINavigationController* navigationController = [[UINavigationController alloc]
                                                     initWithRootViewController:mainViewController];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = navigationController;
+    //mainViewController.managedObjectContext = self.managedObjectContext;
     [self.window makeKeyAndVisible];
-    
-    
     
     return YES;
 }
@@ -46,7 +33,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
@@ -62,7 +49,16 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    // Saves changes in the application's managed object context before the application terminates.
+    //[self saveContext];
+}
+
+#pragma mark - Application's Documents directory
+
+// Returns the URL to the application's Documents directory.
+- (NSURL *)applicationDocumentsDirectory
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 @end

@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "AppearanceManager.h"
 #import "ListViewController.h"
+#import "MapViewController.h"
 
 @interface RootViewController : UIViewController
 
-@property(nonatomic, readwrite) UIColor *color;
+@property UIColor *color;
 @end

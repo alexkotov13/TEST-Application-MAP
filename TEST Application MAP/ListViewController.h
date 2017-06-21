@@ -9,7 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "AppearanceManager.h"
 #import "￼￼ImagePrevViewController.h"
+#import "CoreDataManager.h"
+#import "PointDescription.h"
 
-@interface ListViewController : UITableViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface ListViewController : UITableViewController <NSFetchedResultsControllerDelegate, UITableViewDataSource, UITableViewDelegate>
 
+@property NSFetchedResultsController *fetchedResultsController;
+
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end

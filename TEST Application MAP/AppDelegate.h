@@ -1,19 +1,19 @@
 //
 //  AppDelegate.h
-//  TEST Application MAP
+//  testApp
 //
-//  Created by admin on 17.02.16.
-//  Copyright (c) 2016 admin. All rights reserved.
+//  Created by Anna on 04.04.14.
+//  Copyright (c) 2014 Anna. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-
-@class RootViewController;
+#import "PointDescription.h"
+#import "CoreDataManager.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) RootViewController *viewController;
+- (NSURL *)applicationDocumentsDirectory;
 
 @end
