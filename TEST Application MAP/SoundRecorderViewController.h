@@ -14,5 +14,5 @@
 
 
 @interface SoundRecorderViewController : UIViewController <AVAudioRecorderDelegate>
-
+-(id)initWithPointDescription:(PointDescription*) pointDescription;
 @end

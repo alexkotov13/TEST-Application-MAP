@@ -8,34 +8,30 @@
 
 #import "ListViewController.h"
 
-NSArray *mapTitle;
-NSArray *mapImage;
-
 @interface ListViewController ()
-
+{
+    UIImage *_pickedImage;
+    PointDescription *_info;
+}
 @end
 
 @implementation ListViewController
-
-
-UIImage *pickedImage;
-
-- (id)initWithImage:(UIImage *)image
-{
-    self = [super init];
-    if (self)
-    {
-        pickedImage = image;
-    }
-    return self;
-}
+@synthesize fetchedResultsController = _fetchedResultsController;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    
+    
     self.navigationItem.title = @"List";
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     //[[AppearanceManager shared] customizeRootViewController:self.view];
+    
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];
     
     //bottom navigationItem
     UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back"
@@ -44,74 +40,16 @@ UIImage *pickedImage;
     self.navigationItem.leftBarButtonItem = backButton;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.leftBarButtonItem];
     
-    UIImage * image = [UIImage imageNamed:@"Alex.jpg"];
-    UIImage * imageAnna = [UIImage imageNamed:@"Anna.jpg"];
-    UIImage * imageJury = [UIImage imageNamed:@"Jury.jpg"];
-    UIImage * imageYuliya = [UIImage imageNamed:@"Yuliya.jpg"];
-    UIImage * imageAnastasia = [UIImage imageNamed:@"Anastasia.jpg"];
-    
-    mapTitle = [NSArray arrayWithObjects:@"Alex", @"Anna", @"Yuliya", @"Jury", @"Anastasia", nil];
-    mapImage = [NSArray arrayWithObjects:image, imageAnna, imageYuliya, imageJury, imageAnastasia, nil];
-    
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [[ArrayData shared].textTitle count];
-}
-
-- (NSInteger)tableView1:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [[ArrayData shared].photo count];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *CellIdentifier = @"Cell";
-    
-    //Поиск ячейки
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-    
-    
-    //Если ячейка не найдена
-    if (cell == nil)
+    _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    _fetchedResultsController.delegate = self;
+    [NSFetchedResultsController deleteCacheWithName:@"Root"];
+    NSError *error;
+	if (![[self fetchedResultsController] performFetch:&error])
     {
-        //Создание ячейки
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                       reuseIdentifier:CellIdentifier];
-    }
-    
-    cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
-    cell.textLabel.text = [[[ArrayData shared] textTitle] objectAtIndex:indexPath.row];    
-    cell.imageView.image = [[[ArrayData shared] photo] objectAtIndex:indexPath.row];
-   // cell.textLabel.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1.0];
-    //cell.backgroundColor = [UIColor colorWithWhite:0.4 alpha:1.0];
-    cell.textLabel.textColor = [UIColor blackColor];
-    
-    return cell;
-}
+		NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+		exit(-1);  // Fail
+	}  
 
-UIImagePickerController *imagePicker;
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
-    UIImage * image = cell.imageView.image;  
-        imagePicker = [[UIImagePickerController alloc] init];
-        imagePicker.delegate = self;
-        imagePicker.allowsEditing = YES;
-        [self imagePickerController:image];
-}
-
-- (void) imagePickerController:(UIImage*)image
-{   
-  
-    [self dismissViewControllerAnimated:YES completion:nil];
-    ImagePrevViewController *imagePrevViewController = [[ImagePrevViewController alloc]initWithImage:image];
-    [self.navigationController pushViewController:imagePrevViewController animated:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -128,6 +66,112 @@ UIImagePickerController *imagePicker;
 
 
 
+#pragma mark - UITableViewDelegate & UITableViewDataSource
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    id  sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+    return [sectionInfo numberOfObjects];    
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{    
+    _info = [_fetchedResultsController objectAtIndexPath:indexPath];
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];       
+        [context deleteObject:_info];
+        [context save:nil];
+        [tableView reloadData];
+    }
+    [[CoreDataManager sharedInstance] saveContext];
+    
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell.accessoryType = UITableViewCellSeparatorStyleSingleLine;
+    }
+    [self configureCell:cell atIndexPath:indexPath];
+    return cell;
+}
+
+-(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    _info = [_fetchedResultsController objectAtIndexPath:indexPath];
+    _pickedImage = [_info thumbnail];
+    cell.imageView.image = _pickedImage;
+    cell.textLabel.text = _info.titleForPin;
+
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    _info = [_fetchedResultsController objectAtIndexPath:indexPath];
+    _pickedImage = [_info thumbnail];
+    ImagePrevViewController *imagePrevViewController = [[ImagePrevViewController alloc] initWithIndexOfObject:indexPath];
+    [self.navigationController pushViewController:imagePrevViewController animated:YES];
+}
+
+#pragma mark - NSFetchResultsControllerDelegate
+
+- (void)controllerWillChangeContent:(NSFetchedResultsController *)controller
+{
+    [self.tableView beginUpdates];
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
+{
+    UITableView *tableView = self.tableView;
+    
+    switch(type) {
+        case NSFetchedResultsChangeInsert:
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeDelete:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+            
+        case NSFetchedResultsChangeUpdate:
+            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+            break;
+            
+        case NSFetchedResultsChangeMove:
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+    
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeSection:(id )sectionInfo atIndex:(NSUInteger)sectionIndex forChangeType:(NSFetchedResultsChangeType)type
+{
+    switch(type)
+    {
+        case NSFetchedResultsChangeInsert:
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        case NSFetchedResultsChangeDelete:
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:UITableViewRowAnimationFade];
+            break;
+    }
+}
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller
+{
+    [self.tableView endUpdates];
+}
 
 @end
+

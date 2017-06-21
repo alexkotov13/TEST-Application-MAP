@@ -8,7 +8,7 @@
 
 #import "RootViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import "MapViewController.h"
+
 
 
 CGSize view;
@@ -33,13 +33,7 @@ CGSize view;
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     [[AppearanceManager shared] customizeRootViewController:self.view];   
     view = self.view.bounds.size;      
-    [self drawButton];
-    
-
-
-    
-    
-    
+    [self drawButton];    
 }
 
 - (void)viewWillAppear:(BOOL)animated

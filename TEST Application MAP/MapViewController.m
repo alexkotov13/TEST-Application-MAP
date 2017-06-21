@@ -9,22 +9,46 @@
 #import "MapViewController.h"
 #import "RootViewController.h"
 #import "CameraViewController.h"
-#import <MapKit/MKAnnotationView.h>
+#import <MapKit/MapKit.h>
+#import "￼￼ImagePrevViewController.h"
+
+#define STANDART_MAP 0
+#define SATELLITE_MAP 1
+#define HYBRID_MAP 2
+#define POPUP_MAP 1
+#define POPUP_IMAGE_SOURCE 2
+
+
+
+@interface MapViewController() <UIActionSheetDelegate, MKMapViewDelegate
+,UINavigationControllerDelegate,NSFetchedResultsControllerDelegate>
+{
+    PointDescription* _pinDescriptionEntity;
+    MKMapView* _mapView;
+    UIImage* _image;
+}
+@property (nonatomic, retain) NSString* recorderFilePath;
+@property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
+@end
 
 @implementation MapViewController
-@synthesize mapView;
+
+@synthesize recorderFilePath = _recorderFilePath;
+
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];   
+    [super viewDidLoad];
     
-    self.navigationItem.title = @"MAP"; 
+    _recorderFilePath = nil;
+    [self setFetchedController];
+    self.navigationItem.title = @"MAP";
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     
     //bottom navigationItem
     UIBarButtonItem* backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back"
-                                  style:UIBarButtonItemStyleBordered
-                                  target:self action:@selector(btnBackClicked:) ];
+                                                                   style:UIBarButtonItemStyleBordered
+                                                                  target:self action:@selector(btnBackClicked:) ];
     self.navigationItem.leftBarButtonItem = backButton;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.leftBarButtonItem];
     
@@ -32,87 +56,115 @@
                                 initWithTitle:@"Next"
                                 style:UIBarButtonItemStylePlain
                                 target:self
-                                action:@selector(btnNextClicked:)]; 
+                                action:@selector(btnNextClicked:)];
     self.navigationItem.rightBarButtonItem = btnNext;
-    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];   
-     
-    mapView = [[MKMapView alloc]
-                          initWithFrame:CGRectMake(0, 0,
-                                                   self.view.bounds.size.width,
-                                                   self.view.bounds.size.height)];  
-    mapView.showsUserLocation = YES;
-    mapView.mapType = MKMapTypeStandard;    
-    [self.view addSubview:mapView];   
-    [self mapView:mapView];    
-    [mapView setCenterCoordinate:mapView.userLocation.location.coordinate animated:YES];
-    [self handleLongPress];  //Pins for tours creation    
-   
+    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];
     
     //bottom toolbar
     self.navigationController.toolbarHidden = NO;
     
     [[AppearanceManager shared] customizeToolbar:self.navigationController.toolbar];
     
-     UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     UIBarButtonItem * mapTypeButton = [[UIBarButtonItem alloc] initWithTitle:@"MAP type"
-                                     style:UIBarButtonItemStyleBordered
-                                     target:self action:@selector(changeMapType:)];
+                                                                       style:UIBarButtonItemStyleBordered
+                                                                      target:self action:@selector(changeMapType:)];
     NSMutableArray * arr = [NSMutableArray arrayWithObjects:flexibleSpace,mapTypeButton,flexibleSpace, nil];
     [self setToolbarItems:arr animated:YES];
-    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:mapTypeButton]; 
-    
-    [self mapAnnotation];
-
-   
-
-
-  
+    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:mapTypeButton];
+    [self addMap];
+    _pinDescriptionEntity = [NSEntityDescription
+                             insertNewObjectForEntityForName:@"PointDescription"
+                             inManagedObjectContext:[[CoreDataManager sharedInstance] subContext]];
     
 }
 
-
-
--(void)mapAnnotation
+-(void)addMap
 {
-    MapAnnotation *to = [[MapAnnotation alloc]init];
-    for(int index = 0; index < [[ArrayData shared].mapAnnotation count];index++)
-    {        
-         to = [[ArrayData shared].mapAnnotation objectAtIndex:index];
-         to.title = [[ArrayData shared].textTitle objectAtIndex:index];
-//        to.image = [[ArrayData shared].photo objectAtIndex:index];
-        [self.mapView addAnnotation:[[ArrayData shared].mapAnnotation objectAtIndex:index]];
+    _mapView = [[MKMapView alloc] initWithFrame: CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    _mapView.delegate = self;
+    _mapView.showsUserLocation = YES;
+    [_mapView setUserTrackingMode:MKUserTrackingModeFollow animated:YES];
+    [_mapView setZoomEnabled:YES];
+    [_mapView setScrollEnabled:YES];
+    [self.view addSubview:_mapView];
+    
+}
+
+-(void)setFetchedController
+{
+    _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    [NSFetchedResultsController deleteCacheWithName:@"Root"];
+    NSError *error;
+    if (![[self fetchedResultsController] performFetch:&error])
+    {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        exit(-1);  // Fail
     }
 }
 
-- (void)handleLongPress
+#pragma Action for map
+
+- (void)plotPlaces
 {
-    UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]
-                                          initWithTarget:self action:@selector(addPinToMap:)];
-    lpgr.minimumPressDuration = 0.5f;
-    [self.mapView addGestureRecognizer:lpgr];   
-//    if(lpgr.enabled == YES)
-//        [self.mapView removeGestureRecognizer:lpgr];
-    
+    [_mapView removeAnnotations:_mapView.annotations];
+    NSArray* data = [self.fetchedResultsController fetchedObjects];
+    for (NSArray *row in data)
+    {
+        PointDescription *pinInfo = (PointDescription*)row;
+        [_mapView addAnnotation:pinInfo];
+    }
 }
 
-- (void)addPinToMap:(UIGestureRecognizer *)gestureRecognizer 
-{    
-    if (gestureRecognizer.state != UIGestureRecognizerStateBegan)
-        return;    
-    CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
-    CLLocationCoordinate2D touchMapCoordinate =
-    [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];    
-    MapAnnotation *toAdd = [[MapAnnotation alloc]init];    
-    toAdd.coordinate = touchMapCoordinate;
-    toAdd.title = @"";   
-    [self.mapView addAnnotation:toAdd];    
-    [[ArrayData shared].mapAnnotation addObject:toAdd];
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
+{
+    static NSString *identifier = @"Annotation";
+    if ([annotation isKindOfClass:[PointDescription class]])
+    {
+        
+        MKPinAnnotationView  *annotationView = (MKPinAnnotationView  *) [_mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
+        if (annotationView == nil)
+        {
+            annotationView = [[MKPinAnnotationView  alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
+            annotationView.enabled = YES;
+            annotationView.animatesDrop = YES;
+            annotationView.canShowCallout = YES;
+        }
+        else
+        {
+            annotationView.annotation = annotation;
+        }
+        annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        PointDescription *annotationTapped = (PointDescription *)annotation;
+        UIImage *smallImage = [annotationTapped thumbnail];//[UIImage imageWithData:[annotationTapped thumbnail]];
+        UIImageView *iconView = [[UIImageView alloc] initWithImage:smallImage];
+        iconView.frame = CGRectMake(0, 0, 30, 30);
+        annotationView.leftCalloutAccessoryView = iconView;
+        return annotationView;
+    }
+    return nil;
+}
+
+-(void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
+{
+    NSIndexPath* indexPath = nil;
+    if ([view.annotation isKindOfClass:[PointDescription class]])
+    {
+        PointDescription *annotationTapped = (PointDescription *)view.annotation;
+        indexPath = [_fetchedResultsController indexPathForObject:annotationTapped];
+    }
+    ImagePrevViewController *imagePrevViewController = [[ImagePrevViewController alloc] initWithIndexOfObject:indexPath];
+    [self.navigationController pushViewController:imagePrevViewController animated:YES];
 }
 
 -(void)btnNextClicked:(id)sender
-{     
-    CameraViewController *cameraViewController = [[CameraViewController alloc]init];
-    [self.navigationController pushViewController:cameraViewController animated:YES];                             
+{
+    NSNumber* degree = [[NSNumber alloc] initWithDouble:_mapView.userLocation.coordinate.latitude];
+    _pinDescriptionEntity.latitude = degree;
+    degree = [NSNumber numberWithDouble:_mapView.userLocation.coordinate.longitude];
+    _pinDescriptionEntity.longitude = degree;
+    CameraViewController *cameraViewController = [[CameraViewController alloc]initWithPointDescription:_pinDescriptionEntity];
+    [self.navigationController pushViewController:cameraViewController animated:YES];
 }
 
 -(void)btnBackClicked:(id)sender
@@ -130,21 +182,21 @@
 }
 
 - (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex
-{  
+{
     switch (popup.tag)
     {
         case 1:
         {
             switch (buttonIndex)
-            {              
+            {
                 case 0: //Satellite
-                    self.mapView.mapType = MKMapTypeSatellite;
+                    _mapView.mapType = MKMapTypeSatellite;
                     break;
                 case 1: //Map
-                     self.mapView.mapType = MKMapTypeStandard;
+                    _mapView.mapType = MKMapTypeStandard;
                     break;
-                default: 
-                     break;
+                default:
+                    break;
             }
             break;
         }
@@ -158,28 +210,17 @@
     [super viewWillAppear:animated];
     self.navigationController.toolbarHidden = NO;
     self.navigationController.navigationBarHidden = NO;
+    [self plotPlaces];
 }
 
-- (void)mapView:(MKMapView *)mapView
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
-    MKUserLocation *userLocation;
-    MKCoordinateRegion region;    
-    MKCoordinateSpan span;
-    span.latitudeDelta = 0.005;
-    span.longitudeDelta = 0.005;
-    CLLocationCoordinate2D location;
-    location.latitude = userLocation.coordinate.latitude;
-    location.longitude = userLocation.coordinate.longitude;
-    region.span = span;
-    region.center = location;
-    //[mapView setRegion:region animated:YES];
-   
+    _mapView.centerCoordinate = userLocation.location.coordinate;
 }
 
-
-
-
-
-
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller
+{
+    [self plotPlaces];
+}
 
 @end

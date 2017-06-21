@@ -6,21 +6,12 @@
 //  Copyright (c) 2016 admin. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import "MapAnnotation.h"
 #import "AppearanceManager.h"
-#import "ArrayData.h"
+#import "CoreDataManager.h"
+#import "PointDescription.h"
 
-//@interface MapViewController : UIViewController
-//{
-//  
-//}
-@interface MapViewController : UIViewController <UIActionSheetDelegate, MKMapViewDelegate>
-{
-    MKMapView *mapView;
-}
-@property (nonatomic, retain) MKMapView *mapView;
+
+@interface MapViewController : UIViewController 
 
 @end

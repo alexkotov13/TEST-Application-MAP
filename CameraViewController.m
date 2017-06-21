@@ -15,13 +15,24 @@ CGSize view;
 {
     UIButton *library;
     UIButton *camera;
-    UIButton *cencel;    
+    UIButton *cencel;
+    UIImagePickerController *imagePicker;
+    UIImage* _pickedImage;
+    PointDescription* _pointDescription;
 }
 @end
 
 @implementation CameraViewController
 
-
+-(id)initWithPointDescription:(PointDescription*) pointDescription
+{
+    self = [super init];
+    if(self)
+    {
+        _pointDescription = pointDescription;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -58,7 +69,7 @@ CGSize view;
     [cencel addTarget:self action:@selector(cencelClick:) forControlEvents:UIControlEventTouchUpInside];
     [[AppearanceManager shared] customizeButtonAppearance:cencel CoordinatesX:view.width / 4 - 60 Y:view.height / 1.2 Width:view.width - 40 Radius:10];
 }
-UIImagePickerController *imagePicker;
+
 - (void)libraryButtonClick:(id)sender
 {
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
@@ -84,15 +95,30 @@ UIImagePickerController *imagePicker;
 - (void) imagePickerController:(UIImagePickerController *)picker
  didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-
-    UIImage *pickedImage = [info objectForKey: UIImagePickerControllerEditedImage];
-    [self dismissViewControllerAnimated:YES completion:nil];
     
-//    imagePicker = [[UIImagePickerController alloc]init];
-//    [self.navigationController pushViewController:imagePicker animated:YES];
-    PickerViewController *pickerViewController = [[PickerViewController alloc]initWithImage:pickedImage];
-    [self.navigationController pushViewController:pickerViewController animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];    
+    _pickedImage = [info objectForKey: UIImagePickerControllerEditedImage];
+    [self imagePathWithImage:_pickedImage];
+    _pointDescription.thumbnail = _pickedImage;
+  
+    PickerViewController *pickerViewController = [[PickerViewController alloc] initWithImage:_pickedImage initWithPointDescription:_pointDescription];
+    [self.navigationController pushViewController:pickerViewController animated:YES];   
 
+}
+
+- (NSString *)documentsDicrectory
+{
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+}
+
+- (void)imagePathWithImage:(UIImage *)image
+{
+    NSDate* now = [NSDate date];
+    NSString* caldate = [now description];
+    NSString* recorderFilePath = [NSString stringWithFormat:@"%@/%@.jpg", [self documentsDicrectory], caldate];
+    NSData* data = UIImageJPEGRepresentation(image, 1.0f);
+    [data writeToFile:recorderFilePath atomically:YES];
+    _pointDescription.imagePath = recorderFilePath;
 }
     
 - (void)cameraButtonClick:(id)sender

@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  PointDescription.h
 //  TEST Application MAP
 //
 //  Created by ann on 19.06.17.
@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AppDelegate : NSObject
+@interface PointDescription : NSObject
 
 @end

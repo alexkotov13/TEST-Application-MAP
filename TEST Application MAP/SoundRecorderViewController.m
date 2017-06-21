@@ -7,31 +7,41 @@
 //
 
 #import "SoundRecorderViewController.h"
-UIAlertView *alert;
-NSTimer *recorderTimer;
-UIBarButtonItem *stopButton;
-UIBarButtonItem *recordPauseButton;
-UILabel *_timeLabel;
-UIProgressView *_progress;
-NSString *_recorderFilePath;
 
-BOOL playStop;
+
 
 @interface SoundRecorderViewController ()
 {
-AVAudioRecorder *recorder;
-AVAudioPlayer *player;
+    BOOL playStop;
+    AVAudioRecorder *_recorder;
+    AVAudioPlayer *_player;
+    UIAlertView *_alert;
+    NSTimer *_recorderTimer;
+    UIBarButtonItem *_stopButton;
+    UIBarButtonItem *_recordPauseButton;
+    UILabel *_timeLabel;
+    UIProgressView *_progress;
+    NSString *_recorderFilePath;
 }
+@property(nonatomic) PointDescription* pinDescriptionEntity;
 @end
 
 @implementation SoundRecorderViewController
 
-
+-(id)initWithPointDescription:(PointDescription*) pointDescription
+{
+    self = [super init];
+    if(self)
+    {
+        _pinDescriptionEntity = pointDescription;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];   
-      
+    [super viewDidLoad];
+    
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     [[AppearanceManager shared] customizeRootViewController:self.view];
     
@@ -51,15 +61,15 @@ AVAudioPlayer *player;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];
     
     
-    stopButton = [[UIBarButtonItem alloc] initWithTitle:@"Stop" style:UIBarButtonItemStyleBordered  target:self action:@selector(stopButtonTapped:)];
-    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:stopButton];
-     [ stopButton  setEnabled:NO];
+    _stopButton = [[UIBarButtonItem alloc] initWithTitle:@"Stop" style:UIBarButtonItemStyleBordered  target:self action:@selector(stopButtonTapped:)];
+    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:_stopButton];
+    [_stopButton  setEnabled:NO];
     
-    recordPauseButton = [[UIBarButtonItem alloc] initWithTitle:@"Record" style:UIBarButtonItemStyleBordered  target:self action:@selector(recordPauseTapped:)];
-    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:recordPauseButton];
-          
-    UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];    
-    NSMutableArray * arr = [NSMutableArray arrayWithObjects:stopButton,flexibleSpace,recordPauseButton, nil];
+    _recordPauseButton = [[UIBarButtonItem alloc] initWithTitle:@"Record" style:UIBarButtonItemStyleBordered  target:self action:@selector(recordPauseTapped:)];
+    [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:_recordPauseButton];
+    
+    UIBarButtonItem* flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    NSMutableArray * arr = [NSMutableArray arrayWithObjects:_stopButton,flexibleSpace,_recordPauseButton, nil];
     [self setToolbarItems:arr animated:YES];
     
     _timeLabel = [ [UILabel alloc ] initWithFrame:CGRectMake(self.view.bounds.size.width / 4, self.view.bounds.size.height / 2, 150.0, 50.0) ];
@@ -76,22 +86,20 @@ AVAudioPlayer *player;
     NSDate* now = [NSDate date];
     NSString* caldate = [now description];
     _recorderFilePath = [NSString stringWithFormat:@"%@/%@.caf", [self documentsDicrectory], caldate];
-    [[ArrayData shared].sound addObject:_recorderFilePath];
     NSURL *URL = [NSURL fileURLWithPath:_recorderFilePath];
     NSError* err = nil;
-    recorder = [[AVAudioRecorder alloc]
-                initWithURL:URL settings:@{AVFormatIDKey: @(kAudioFormatMPEG4AAC)}
-                error:&err];
-    [recorder setDelegate:self];
-    [recorder prepareToRecord];
-    recorder.meteringEnabled = YES;
-    recorderTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
-                                                     target:self
-                                                   selector:@selector(updateDisplay)
-                                                   userInfo:nil
-                                                    repeats:YES];
-
-
+    _recorder = [[AVAudioRecorder alloc]
+                 initWithURL:URL settings:@{AVFormatIDKey: @(kAudioFormatMPEG4AAC)}
+                 error:&err];
+    [_recorder setDelegate:self];
+    //[recorder prepareToRecord];
+    _recorder.meteringEnabled = YES;
+    _recorderTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+                                                      target:self
+                                                    selector:@selector(updateDisplay)
+                                                    userInfo:nil
+                                                     repeats:YES];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -101,23 +109,31 @@ AVAudioPlayer *player;
     self.navigationController.navigationBarHidden = NO;
 }
 
-
+- (NSString *)documentsDicrectory
+{
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+}
 
 -(void)btnNextClicked:(id)sender
-{   
-    alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-    [alert show];
+{
+    _alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [_alert show];
 }
 
 -(void)btnBackClicked:(id)sender
 {
-    PickerViewController *pickerViewController  = [[PickerViewController alloc]init];
+    PickerViewController *pickerViewController  = [[PickerViewController alloc]initWithImage:[_pinDescriptionEntity thumbnail] initWithPointDescription:_pinDescriptionEntity];
     [self.navigationController pushViewController:pickerViewController animated:YES];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if(alertView == alert)
+    NSError* error = nil;
+    NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedInstance] subContext];
+    [managedObjectContext save:&error];
+    [[CoreDataManager sharedInstance] saveContext];
+    
+    if(alertView == _alert)
         if (buttonIndex == 0)
         {
             MapViewController *mapViewController = [[MapViewController alloc]init];
@@ -130,9 +146,10 @@ AVAudioPlayer *player;
 
 - (void)stopButtonTapped:(id)sender
 {
-    [recorder stop];    
+    [_recorder stop];
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     [audioSession setActive:NO error:nil];
+    _pinDescriptionEntity.soundPath = _recorderFilePath;
 }
 
 
@@ -148,49 +165,42 @@ AVAudioPlayer *player;
 
 - (void) audioRecorderDidFinishRecording:(AVAudioRecorder *)avrecorder successfully:(BOOL)flag
 {
-    [recordPauseButton setTitle:@"Record"];
-    
-    [stopButton setEnabled:NO];
+    [_recordPauseButton setTitle:@"Record"];
+    [_stopButton setEnabled:NO];
     //[playButton setEnabled:YES];
 }
 
 - (void)recordPauseTapped:(id)sender
-{    
-    if (!recorder.recording)
-    {       
-        [recorder record];        
-        // Start recording       
-        [recordPauseButton setTitle:@"Pause"];
+{
+    if (!_recorder.recording)
+    {
+        [_recorder record];
+        // Start recording
+        [_recordPauseButton setTitle:@"Pause"];
         
     }
     else
-    {        
+    {
         // Pause recording
-        [recorder pause];
-        [recordPauseButton setTitle:@"Record" ];
-    }    
-    [stopButton setEnabled:YES];
-
-}
-
-- (NSString *)documentsDicrectory
-{
-    return NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        [_recorder pause];
+        [_recordPauseButton setTitle:@"Record" ];
+    }
+    [_stopButton setEnabled:YES];
+    
 }
 
 -(void)updateDisplay
 {
-    float minutes = floor(recorder.currentTime/60);
-    float seconds = recorder.currentTime - (minutes * 60);
+    float minutes = floor(_recorder.currentTime/60);
+    float seconds = _recorder.currentTime - (minutes * 60);
     NSString* timeInfoString = [[NSString alloc]
                                 initWithFormat:@"%02.0f:%02.0f",
                                 minutes, seconds];
     _timeLabel.text = timeInfoString;
-    [recorder updateMeters];
-    float dBLevel = [recorder averagePowerForChannel:0];
+    [_recorder updateMeters];
+    float dBLevel = [_recorder averagePowerForChannel:0];
     dBLevel = 1 - fabsf(dBLevel) / 100;
     [_progress setProgress:dBLevel animated:YES];
-    
 }
 
 

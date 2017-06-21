@@ -8,22 +8,27 @@
 
 #import "PickerViewController.h"
 
-CGSize view;
-UIImage *pickedImage;
-UIAlertView *alert;
-
 @interface PickerViewController ()
+{
+    CGSize view;
+    UIImage *_pickedImage;
+    UIAlertView *alert;
+   PointDescription *_pointDescription;
+    UITextField* _text;
+}
 
+@property (nonatomic) NSFetchedResultsController *fetchedResultsController;
 @end
 
 @implementation PickerViewController
 
-- (id)initWithImage:(UIImage *)image
+- (id)initWithImage:(UIImage *)image initWithPointDescription:(PointDescription*) pointDescription
 {
     self = [super init];
     if (self)
     {
-        pickedImage = image;
+        _pointDescription = pointDescription;
+        _pickedImage = image;
     }
     return self;    
 }
@@ -33,14 +38,12 @@ UIAlertView *alert;
     [super viewDidLoad];
     
     self.navigationItem.title = @"";
-    
-//    self.view.backgroundColor = [UIColor colorWithPatternImage:pickedImage];
-    UIImageView * backdroundView = [[UIImageView alloc] initWithImage:pickedImage];
+    [self setFetchedController];
+
+    UIImageView * backdroundView = [[UIImageView alloc] initWithImage:_pickedImage];
     backdroundView.contentMode = UIViewContentModeScaleAspectFill;
     backdroundView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-    [self.view addSubview:backdroundView];  
-    
-    [[ArrayData shared].photo addObject:pickedImage];
+    [self.view addSubview:backdroundView];    
     
     [[AppearanceManager shared] customizeTopNavigationBarAppearance:self.navigationController.navigationBar];
     
@@ -60,18 +63,18 @@ UIAlertView *alert;
     [[AppearanceManager shared] customizeBackBarButtonAppearanceForNavigationBar:self.navigationItem.rightBarButtonItem];
     
     view = self.view.bounds.size;
-    UITextField* text = [[UITextField alloc] initWithFrame:CGRectMake(view.width/4-20, view.height/4, 200.0, 40.0)];
-    text.borderStyle = UITextBorderStyleRoundedRect;
-    text.font = [UIFont systemFontOfSize:15];
-    text.placeholder = @"Enter text";
-    text.autocorrectionType = UITextAutocorrectionTypeNo;
-    text.keyboardType = UIKeyboardTypeDefault;
-    text.returnKeyType = UIReturnKeyDone;
-    text.clearButtonMode = UITextFieldViewModeWhileEditing;
-    text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    text.delegate = self;
-    text.returnKeyType = UIReturnKeyGo;
-    [self.view addSubview:text];   
+    _text = [[UITextField alloc] initWithFrame:CGRectMake(view.width/4-20, view.height/3, 200.0, 40.0)];
+    _text.borderStyle = UITextBorderStyleRoundedRect;
+    _text.font = [UIFont systemFontOfSize:15];
+    _text.placeholder = @"Enter text";
+    _text.autocorrectionType = UITextAutocorrectionTypeNo;
+    _text.keyboardType = UIKeyboardTypeDefault;
+    _text.returnKeyType = UIReturnKeyDone;
+    _text.clearButtonMode = UITextFieldViewModeWhileEditing;
+    _text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    _text.delegate = self;
+    _text.returnKeyType = UIReturnKeyGo;
+    [self.view addSubview:_text];
     
     
 }
@@ -83,9 +86,23 @@ UIAlertView *alert;
     self.navigationController.navigationBarHidden = NO;
 }
 
+-(void)setFetchedController
+{
+    _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    [NSFetchedResultsController deleteCacheWithName:@"Root"];
+    NSError *error;
+    if (![[self fetchedResultsController] performFetch:&error])
+    {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        exit(-1);  // Fail
+    }
+}
+
 -(void)btnNextClicked:(id)sender
 {
-    SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]init];
+    _pointDescription.titleForPin = _text.text;
+    [[CoreDataManager sharedInstance] saveContext];
+    SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]initWithPointDescription:_pointDescription];
     [self.navigationController pushViewController:soundRecorderViewController animated:YES];
 }
 
@@ -101,7 +118,9 @@ UIAlertView *alert;
     if(alertView == alert)
         if (buttonIndex == 0)
         {
-            SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]init];
+            _pointDescription.titleForPin = _text.text;
+            [[CoreDataManager sharedInstance] saveContext];
+            SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]initWithPointDescription:_pointDescription];
             [self.navigationController pushViewController:soundRecorderViewController animated:YES];
         }
 }
@@ -110,7 +129,6 @@ UIAlertView *alert;
 {    
     alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
     [alert show];   
-    [[ArrayData shared].textTitle addObject:textField.text];
     return YES;
 }
 
