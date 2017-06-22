@@ -12,7 +12,7 @@
 #import "CoreDataManager.h"
 #import "PointDescription.h"
 
-@interface ListViewController : UITableViewController <NSFetchedResultsControllerDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface ListViewController : UITableViewController
 
 @property NSFetchedResultsController *fetchedResultsController;
 
