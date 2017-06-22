@@ -90,6 +90,7 @@
     [_mapView setUserTrackingMode:MKUserTrackingModeFollow animated:YES];
     [_mapView setZoomEnabled:YES];
     [_mapView setScrollEnabled:YES];
+    
     [self.view addSubview:_mapView];
     
 }
@@ -97,6 +98,7 @@
 -(void)setFetchedController
 {
     _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    _fetchedResultsController.delegate = self;
     [NSFetchedResultsController deleteCacheWithName:@"Root"];
     NSError *error;
     if (![[self fetchedResultsController] performFetch:&error])
@@ -162,12 +164,20 @@
 
 -(void)btnNextClicked:(id)sender
 {
-    NSNumber* degree = [[NSNumber alloc] initWithDouble:_mapView.userLocation.coordinate.latitude];
-    _pinDescriptionEntity.latitude = degree;
-    degree = [NSNumber numberWithDouble:_mapView.userLocation.coordinate.longitude];
-    _pinDescriptionEntity.longitude = degree;
-    CameraViewController *cameraViewController = [[CameraViewController alloc]initWithPointDescription:_pinDescriptionEntity];
-    [self.navigationController pushViewController:cameraViewController animated:YES];
+    if(_pinDescriptionEntity.latitude == nil)
+    {
+        NSNumber* degree = [[NSNumber alloc] initWithDouble:_mapView.userLocation.coordinate.latitude];
+        _pinDescriptionEntity.latitude = degree;
+        degree = [NSNumber numberWithDouble:_mapView.userLocation.coordinate.longitude];
+        _pinDescriptionEntity.longitude = degree;
+        CameraViewController *cameraViewController = [[CameraViewController alloc]initWithPointDescription:_pinDescriptionEntity];
+        [self.navigationController pushViewController:cameraViewController animated:YES];
+    }
+    else
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"This location already has an annotation.\n Select another location..." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+    }
 }
 
 -(void)btnBackClicked:(id)sender

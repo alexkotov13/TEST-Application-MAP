@@ -121,8 +121,16 @@
 
 -(void)btnNextClicked:(id)sender
 {
-    _alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-    [_alert show];
+    if(_pinDescriptionEntity.soundPath == nil)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!" message:@"Sound not recorded" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+    }
+    else
+    {
+        _alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [_alert show];
+    }
 }
 
 -(void)btnBackClicked:(id)sender

@@ -1,7 +1,7 @@
 
 
 #import "CoreDataManager.h"
-@interface CoreDataManager()
+@interface CoreDataManager() <NSFetchedResultsControllerDelegate>
 
 @property NSManagedObjectModel *managedObjectModel;
 @property NSPersistentStoreCoordinator *persistentStoreCoordinator;
@@ -95,7 +95,7 @@ static CoreDataManager *sharedManager = nil;
     }
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"PointDescription" inManagedObjectContext:_managedObjectContext];
-    [fetchRequest setEntity:entity];
+    [fetchRequest setEntity:entity];    
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"titleForPin" ascending:NO];
     [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sort]];
     [fetchRequest setFetchBatchSize:20];
@@ -103,6 +103,7 @@ static CoreDataManager *sharedManager = nil;
     [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
                                         managedObjectContext:_managedObjectContext sectionNameKeyPath:nil
                                                    cacheName:@"Root"];
+    //theFetchedResultsController.delegate = self;
     self.fetchedResultsController = theFetchedResultsController;
     return _fetchedResultsController;
 }

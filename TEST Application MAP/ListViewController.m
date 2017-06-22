@@ -8,7 +8,7 @@
 
 #import "ListViewController.h"
 
-@interface ListViewController ()
+@interface ListViewController ()  <NSFetchedResultsControllerDelegate, UITableViewDataSource, UITableViewDelegate>
 {
     UIImage *_pickedImage;
     PointDescription *_info;
@@ -31,6 +31,7 @@
 -(void)setFetchedController
 {
     _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    _fetchedResultsController.delegate = self;
     [NSFetchedResultsController deleteCacheWithName:@"Root"];
     NSError *error;
     if (![[self fetchedResultsController] performFetch:&error])
@@ -82,17 +83,13 @@
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    _info = [_fetchedResultsController objectAtIndexPath:indexPath];
+{    
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
-        NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];
-        [context deleteObject:_info];
-        [context save:nil];
-        [tableView reloadData];
-    }
-    [[CoreDataManager sharedInstance] saveContext];
-    
+        NSManagedObjectContext *context = [[CoreDataManager sharedInstance] managedObjectContext];       
+        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+        [[CoreDataManager sharedInstance] saveContext];    
+    }   
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -172,5 +169,6 @@
 {
     [self.tableView endUpdates];
 }
+
 
 @end

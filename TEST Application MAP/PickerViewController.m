@@ -91,6 +91,7 @@
 -(void)setFetchedController
 {
     _fetchedResultsController = [[CoreDataManager sharedInstance] fetchedResultsController];
+    _fetchedResultsController.delegate = self;
     [NSFetchedResultsController deleteCacheWithName:@"Root"];
     NSError *error;
     if (![[self fetchedResultsController] performFetch:&error])
@@ -102,6 +103,9 @@
 
 -(void)btnNextClicked:(id)sender
 {
+    _alert = [[UIAlertView alloc] initWithTitle:@"Saved !" message:0 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [_alert show];
+    
     _pointDescription.titleForPin = _text.text;
     SoundRecorderViewController *soundRecorderViewController = [[SoundRecorderViewController alloc]initWithPointDescription:_pointDescription];
     [self.navigationController pushViewController:soundRecorderViewController animated:YES];
